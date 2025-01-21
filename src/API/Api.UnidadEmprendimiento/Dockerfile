@@ -21,6 +21,10 @@ COPY . .
 WORKDIR "/src/src/API/Api.UnidadEmprendimiento"
 RUN dotnet build "./Api.UnidadEmprendimiento.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# Instalar las herramientas de dotnet-ef
+RUN dotnet tool install --global dotnet-ef
+
+
 # Esta fase se usa para publicar el proyecto de servicio que se copiará en la fase final.
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
