@@ -1,0 +1,36 @@
+name: dockercompose506547576007604764
+services:
+  api.unidademprendimiento:
+    build:
+      context: C:\Users\USUARIO\Desktop\Opcion de grado UE\API\API_UNIDADEMPRENDIMIENTO
+      dockerfile: src/API/Api.UnidadEmprendimiento/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ASPNETCORE_HTTPS_PORTS: "8081"
+    image: apiunidademprendimiento
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 8080
+        protocol: tcp
+      - mode: ingress
+        target: 8081
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming/Microsoft/UserSecrets
+        target: /home/app/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming/ASP.NET/Https
+        target: /home/app/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+networks:
+  default:
+    name: dockercompose506547576007604764_default

@@ -1,0 +1,63 @@
+name: dockercompose506547576007604764
+services:
+  api.unidademprendimiento:
+    build:
+      context: C:\Users\USUARIO\Desktop\Opcion de grado UE\API\API_UNIDADEMPRENDIMIENTO
+      dockerfile: src/API/Api.UnidadEmprendimiento/Dockerfile
+    command:
+      - dotnet
+      - ef
+      - database
+      - update
+    depends_on:
+      sqlserverdocker:
+        condition: service_started
+        required: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ASPNETCORE_HTTPS_PORTS: "8081"
+      ConnectionDB: Server=sqlserverdocker;Database=UNIDADEMPRENDIMIENTO;User Id=sa;Password=UEUA2025mj!*;MultipleActiveResultSets=True;TrustServerCertificate=True;
+    image: apiunidademprendimiento
+    networks:
+      mynetworkapi: null
+    ports:
+      - mode: ingress
+        target: 8081
+        published: "5001"
+        protocol: tcp
+      - mode: ingress
+        target: 8080
+        protocol: tcp
+      - mode: ingress
+        target: 8081
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming/Microsoft/UserSecrets
+        target: /home/app/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming/ASP.NET/Https
+        target: /home/app/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+  sqlserverdocker:
+    container_name: sql-server-docker
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: UEUA2025mj!*
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks:
+      mynetworkapi: null
+    ports:
+      - mode: ingress
+        target: 1433
+        published: "8006"
+        protocol: tcp
+networks:
+  mynetworkapi:
+    name: dockercompose506547576007604764_mynetworkapi

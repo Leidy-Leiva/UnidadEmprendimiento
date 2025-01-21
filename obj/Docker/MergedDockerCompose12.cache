@@ -1,0 +1,136 @@
+name: dockercompose9403049740974091471
+services:
+  api.unidademprendimiento:
+    build:
+      context: C:\Users\USUARIO\Desktop\Opcion_de_grado_UE\API\API_UNIDADEMPRENDIMIENTO
+      dockerfile: src/API/Api.UnidadEmprendimiento/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Debug
+        LAUNCHING_FROM_VS: "true"
+      labels:
+        com.microsoft.created-by: visual-studio
+        com.microsoft.visual-studio.project-name: Api.UnidadEmprendimiento
+      target: base
+    command:
+      - /bin/bash
+      - -c
+      - "until dotnet ef database update; do \necho 'Esperando a SQL Server...'; \nsleep 5; \ndone\n"
+    container_name: Api.UnidadEmprendimiento_1
+    depends_on:
+      sqlserverdocker:
+        condition: service_started
+        required: true
+    entrypoint:
+      - dotnet
+      - --roll-forward
+      - Major
+      - /VSTools/DistrolessHelper/DistrolessHelper.dll
+      - --wait
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ASPNETCORE_HTTPS_PORTS: "8081"
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ConnectionDB: Server=sqlserverdocker,1433;Database=UNIDADEMPRENDIMIENTO;User Id=sa;Password=UEUA2025mj!*;MultipleActiveResultSets=True;TrustServerCertificate=True;
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+      NUGET_FALLBACK_PACKAGES: /.nuget/fallbackpackages
+    image: apiunidademprendimiento:dev
+    labels:
+      com.microsoft.visualstudio.debuggee.arguments: ' --additionalProbingPath /.nuget/packages --additionalProbingPath /.nuget/fallbackpackages  "/app/bin/Debug/net8.0/Api.UnidadEmprendimiento.dll"'
+      com.microsoft.visualstudio.debuggee.killprogram: dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet
+      com.microsoft.visualstudio.debuggee.program: dotnet
+      com.microsoft.visualstudio.debuggee.workingdirectory: /app
+    networks:
+      mynetworkapi: null
+    ports:
+      - mode: ingress
+        target: 8081
+        published: "5001"
+        protocol: tcp
+      - mode: ingress
+        target: 8080
+        protocol: tcp
+      - mode: ingress
+        target: 8081
+        protocol: tcp
+    tty: true
+    volumes:
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming\Microsoft\UserSecrets
+        target: /home/app/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming\ASP.NET\Https
+        target: /home/app/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\Desktop\Opcion_de_grado_UE\API\API_UNIDADEMPRENDIMIENTO\src\API\Api.UnidadEmprendimiento
+        target: /app
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\Desktop\Opcion_de_grado_UE\API\API_UNIDADEMPRENDIMIENTO
+        target: /src
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\vsdbg\vs2017u5
+        target: /remote_debugger
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\.nuget\packages
+        target: /.nuget/packages
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages
+        target: /.nuget/fallbackpackages
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming\ASP.NET\Https
+        target: /root/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\USUARIO\AppData\Roaming\Microsoft\UserSecrets
+        target: /root/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0
+        target: /VSTools
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload
+        target: /HotReloadAgent
+        read_only: true
+        bind:
+          create_host_path: true
+  sqlserverdocker:
+    container_name: sql-server-docker
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: UEUA2025mj!*
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks:
+      mynetworkapi: null
+    ports:
+      - mode: ingress
+        target: 1433
+        published: "8006"
+        protocol: tcp
+networks:
+  mynetworkapi:
+    name: dockercompose9403049740974091471_mynetworkapi
